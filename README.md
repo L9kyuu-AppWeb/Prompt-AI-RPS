@@ -1,7 +1,7 @@
 # 🎓 Generator Prompt RPS (Rencana Pembelajaran Semester)
 
 🌐 **Akses Aplikasi Web:**  
-👉 [https://l9kyuu-appweb.github.io/generator-rps/](https://l9kyuu-appweb.github.io/generator-rps/)
+👉 [https://l9kyuu-appweb.github.io/Prompt-AI-RPS/](https://l9kyuu-appweb.github.io/Prompt-AI-RPS/)
 
 **Generator Prompt RPS** adalah aplikasi web interaktif berbasis HTML, Tailwind CSS, dan JavaScript yang membantu dosen atau pengembang kurikulum membuat *prompt* terstruktur dan siap pakai untuk menyusun Rencana Pembelajaran Semester (RPS) berbasis **Outcome-Based Education (OBE)**.
 
