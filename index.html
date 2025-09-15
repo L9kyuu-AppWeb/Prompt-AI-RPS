@@ -243,52 +243,38 @@
         </div>
 
         <div class="mb-8 p-4 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
-            <h2 class="text-xl font-semibold mb-4 text-slate-700">8. Kriteria Penilaian (masukkan persentase bobot)</h2>
-            <div class="checkbox-group">
-                <div class="checkbox-item">
-                    <label for="penilaian-aktifitas">
-                        <input type="checkbox" id="penilaian-aktifitas" name="penilaian" value="Aktivitas Partisipatif" onchange="togglePercentageInput(this)">
-                        <span>Aktivitas Partisipatif</span>
-                    </label>
-                    <input type="number" placeholder="%" min="0" max="100" class="percentage-input hidden p-2 border rounded-md" data-label="Aktivitas Partisipatif">
-                </div>
-                <div class="checkbox-item">
-                    <label for="penilaian-proyek">
-                        <input type="checkbox" id="penilaian-proyek" name="penilaian" value="Hasil Proyek" onchange="togglePercentageInput(this)">
-                        <span>Hasil Proyek</span>
-                    </label>
-                    <input type="number" placeholder="%" min="0" max="100" class="percentage-input hidden p-2 border rounded-md" data-label="Hasil Proyek">
-                </div>
-                <div class="checkbox-item">
-                    <label for="penilaian-kuis">
-                        <input type="checkbox" id="penilaian-kuis" name="penilaian" value="Kuis" onchange="togglePercentageInput(this)">
-                        <span>Kuis</span>
-                    </label>
-                    <input type="number" placeholder="%" min="0" max="100" class="percentage-input hidden p-2 border rounded-md" data-label="Kuis">
-                </div>
-                <div class="checkbox-item">
-                    <label for="penilaian-tugas">
-                        <input type="checkbox" id="penilaian-tugas" name="penilaian" value="Tugas" onchange="togglePercentageInput(this)">
-                        <span>Tugas</span>
-                    </label>
-                    <input type="number" placeholder="%" min="0" max="100" class="percentage-input hidden p-2 border rounded-md" data-label="Tugas">
-                </div>
-                <div class="checkbox-item">
-                    <label for="penilaian-uts">
-                        <input type="checkbox" id="penilaian-uts" name="penilaian" value="Ujian Tengah Semester" onchange="togglePercentageInput(this)">
-                        <span>Ujian Tengah Semester</span>
-                    </label>
-                    <input type="number" placeholder="%" min="0" max="100" class="percentage-input hidden p-2 border rounded-md" data-label="Ujian Tengah Semester">
-                </div>
-                <div class="checkbox-item">
-                    <label for="penilaian-uas">
-                        <input type="checkbox" id="penilaian-uas" name="penilaian" value="Ujian Akhir Semester" onchange="togglePercentageInput(this)">
-                        <span>Ujian Akhir Semester</span>
-                    </label>
-                    <input type="number" placeholder="%" min="0" max="100" class="percentage-input hidden p-2 border rounded-md" data-label="Ujian Akhir Semester">
-                </div>
-            </div>
-        </div>
+    <h2 class="text-xl font-semibold mb-4 text-slate-700">8. Kriteria Penilaian</h2>
+    <div class="overflow-x-auto">
+        <table class="min-w-full border border-slate-300 text-sm">
+            <thead class="bg-slate-200">
+                <tr>
+                    <th class="border p-2">Basis Evaluasi</th>
+                    <th class="border p-2">Komponen Evaluasi</th>
+                    <th class="border p-2">Sub-CPMK</th>
+                    <th class="border p-2">Deskripsi % Indikator</th>
+                    <th class="border p-2">Metode Penilaian</th>
+                    <th class="border p-2">Bobot (%)</th>
+                    <th class="border p-2">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="penilaian-container">
+                <tr class="penilaian-row">
+                    <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Basis Evaluasi"></td>
+                    <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Komponen"></td>
+                    <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Sub-CPMK"></td>
+                    <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Deskripsi"></td>
+                    <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Metode"></td>
+                    <td class="border p-2"><input type="number" class="w-full p-1 border rounded" min="0" max="100" placeholder="%"></td>
+                    <td class="border p-2 text-center">
+                        <button type="button" class="btn btn-danger text-xs px-2 py-1" onclick="removeFormField(this)">Hapus</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button type="button" class="btn btn-primary mt-4" onclick="addPenilaianRow()">Tambah Baris</button>
+</div>
+
 
         <div class="text-center mb-8">
             <button type="button" class="btn btn-primary text-lg px-6 py-3" onclick="generatePrompt()">
@@ -495,6 +481,45 @@
             // Using a simple alert, consider a custom modal for better UX
             alert('Prompt berhasil disalin ke clipboard!');
         }
+
+        // Fungsi tambah baris kriteria penilaian
+function addPenilaianRow() {
+    const container = document.getElementById('penilaian-container');
+    const tr = document.createElement('tr');
+    tr.className = 'penilaian-row';
+    tr.innerHTML = `
+        <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Basis Evaluasi"></td>
+        <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Komponen"></td>
+        <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Sub-CPMK"></td>
+        <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Deskripsi"></td>
+        <td class="border p-2"><input type="text" class="w-full p-1 border rounded" placeholder="Metode"></td>
+        <td class="border p-2"><input type="number" class="w-full p-1 border rounded" min="0" max="100" placeholder="%"></td>
+        <td class="border p-2 text-center">
+            <button type="button" class="btn btn-danger text-xs px-2 py-1" onclick="removeFormField(this)">Hapus</button>
+        </td>
+    `;
+    container.appendChild(tr);
+}
+
+// Ubah generatePrompt agar menambahkan tabel penilaian
+// Tambahkan sebelum `document.getElementById('generated-prompt').value = prompt;`
+const penilaianRows = document.querySelectorAll('#penilaian-container .penilaian-row');
+if (penilaianRows.length > 0) {
+    prompt += "8. Kriteria Penilaian (dalam tabel):\n\n";
+    prompt += "| Basis Evaluasi | Komponen Evaluasi | Sub-CPMK | Deskripsi % Indikator | Metode Penilaian | Bobot (%) |\n";
+    prompt += "|----------------|------------------|----------|------------------------|------------------|-----------|\n";
+    penilaianRows.forEach(row => {
+        const cols = row.querySelectorAll('input');
+        const basis = cols[0].value.trim() || "-";
+        const komponen = cols[1].value.trim() || "-";
+        const sub = cols[2].value.trim() || "-";
+        const deskripsi = cols[3].value.trim() || "-";
+        const metode = cols[4].value.trim() || "-";
+        const bobot = cols[5].value.trim() || "0";
+        prompt += `| ${basis} | ${komponen} | ${sub} | ${deskripsi} | ${metode} | ${bobot}% |\n`;
+    });
+    prompt += "\n";
+}
     </script>
 </body>
 </html>
