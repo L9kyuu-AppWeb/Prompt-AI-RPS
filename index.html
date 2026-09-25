@@ -371,6 +371,7 @@
 
         <div class="text-center gap-bottom">
             <button type="button" class="btn-generate" onclick="generatePrompt()">Buat Prompt RPS</button>
+            <button type="button" class="btn btn-white gap-top" onclick="resetForm()">Reset</button>
         </div>
 
         <div class="card card-white">
@@ -446,7 +447,7 @@
         }
 
         function generatePrompt() {
-            let prompt = 'Saya ingin kamu bertindak sebagai seorang Dosen Pengembang RPS profesional yang membuat Rencana Pembelajaran Semester.\n\nRencana Pembelajaran Semester (RPS) berbasis OBE (Outcome-Based Education) harus mencakup beberapa unsur penting, termasuk identitas mata kuliah, deskripsi mata kuliah, bahan kajian, Pustaka Utama dan pendukung. Selain itu, buatkan dalam bentuk tabel Rencana Kegiatan Belajar Mengajar seperti dibawah ini,\n1.minggu ke\n2. Kemampuan akhir tiap tahapan belajar (sub-cmpk isinya)\n3. penilaian indicator\n4. penilaian Teknik & kriteria\n5. Bentuk Pembelajaran, Metode, dan estimasi Waktu (daring & luring)\n6. Penugasan & Estimasi Waktu (daring & luring)\n7. Materi Pembelajaran & Referensi (dari Pustaka Utama dan Pendukung)\n8. Bobot Penilaian\n\nKeterangan estimasi waktu: TM = tatap muka (50\' × SKS per minggu, luring); PT = penugasan terstruktur (60\' × SKS per minggu, digunakan bila ada penugasan); BM = belajar mandiri (60\' × SKS per minggu, daring)\n\nKetentuan Bobot Penilaian: 1 semester = 16 pertemuan; UTS di pertemuan ke-8 dan UAS di pertemuan ke-16; total bobot seluruh 16 pertemuan harus 100; jangan beri bobot 0 pada pertemuan mana pun. Pada pertemuan ke-8 dan ke-16, kolom sub-CPMK dikosongkan (tidak diisi).\n\nRPS berbasis OBE juga harus memuat pengalaman belajar mahasiswa yang berpusat pada peserta didik dan berorientasi pada hasil, serta metode pembelajaran yang beragam dan fleksibel.:\n\n';
+            let prompt = 'Saya ingin kamu bertindak sebagai seorang Dosen Pengembang RPS profesional yang membuat Rencana Pembelajaran Semester.\n\nRencana Pembelajaran Semester (RPS) berbasis OBE (Outcome-Based Education) harus mencakup beberapa unsur penting, termasuk identitas mata kuliah, deskripsi mata kuliah, bahan kajian, Pustaka Utama dan pendukung. Selain itu, buatkan dalam bentuk tabel Rencana Kegiatan Belajar Mengajar seperti dibawah ini,\n1.minggu ke\n2. Kemampuan akhir tiap tahapan belajar (sub-cmpk isinya)\n3. penilaian indicator\n4. penilaian Teknik & kriteria\n5. Bentuk Pembelajaran, Metode, dan estimasi Waktu (daring & luring)\n6. Penugasan & Estimasi Waktu (daring & luring)\n7. Materi Pembelajaran & Referensi (dari Pustaka Utama dan Pendukung)\n8. Bobot Penilaian\n\nKeterangan estimasi waktu (untuk kolom Bentuk Pembelajaran, Metode & Estimasi Waktu dan Penugasan & Estimasi Waktu) per minggu sesuai SKS:\n1 SKS: TM (1 × 50 menit); BM (1 × 60 menit); PT (1 × 60 menit)\n2 SKS: TM (2 × 50 menit) = 100 menit; BM (2 × 60 menit) = 120 menit; PT (2 × 60 menit) = 120 menit\n3 SKS: TM (3 × 50 menit) = 150 menit; BM (3 × 60 menit) = 180 menit; PT (3 × 60 menit) = 180 menit\nCara penulisan: tuliskan estimasi waktu di akhir setiap isian, contoh: "Based Learning + Presentasi. TM (1 × 50 menit)". Gunakan rincian sesuai SKS mata kuliah yang diisi. TM = tatap muka (luring); PT = penugasan terstruktur (dipakai bila ada penugasan); BM = belajar mandiri (daring).\n\nKetentuan Bobot Penilaian: 1 semester = 16 pertemuan; UTS di pertemuan ke-8 dan UAS di pertemuan ke-16; total bobot seluruh 16 pertemuan harus 100; jangan beri bobot 0 pada pertemuan mana pun. Pada pertemuan ke-8 dan ke-16, kolom sub-CPMK dikosongkan (tidak diisi).\n\nRPS berbasis OBE juga harus memuat pengalaman belajar mahasiswa yang berpusat pada peserta didik dan berorientasi pada hasil, serta metode pembelajaran yang beragam dan fleksibel.:\n\n';
 
             const mataKuliah = document.getElementById('mata-kuliah').value.trim();
             if (mataKuliah) prompt += '1. Mata Kuliah: ' + mataKuliah + '\n';
@@ -529,6 +530,96 @@
             document.execCommand('copy');
             alert('Prompt berhasil disalin ke clipboard!');
         }
+
+        const STORAGE_KEY = 'rpsFormState';
+
+        function pairGroups(containerId) {
+            return Array.from(document.querySelectorAll('#' + containerId + ' .field-group')).map(group =>
+                [group.children[0].value.trim(), group.children[1].value.trim()]
+            );
+        }
+
+        function singleGroups(containerId) {
+            return Array.from(document.querySelectorAll('#' + containerId + ' .field-group input[type="text"]')).map(input =>
+                input.value.trim()
+            );
+        }
+
+        function saveForm() {
+            const penilaian = {};
+            document.querySelectorAll('input[name="penilaian"]').forEach(checkbox => {
+                penilaian[checkbox.value] = {
+                    checked: checkbox.checked,
+                    percentage: checkbox.closest('.checkbox-item').querySelector('.percentage-input').value.trim()
+                };
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                'mata-kuliah': document.getElementById('mata-kuliah').value,
+                'sks': document.getElementById('sks').value,
+                'semester': document.getElementById('semester').value,
+                cpl: pairGroups('cpl-container'),
+                cpmk: pairGroups('cpmk-container'),
+                subcpmk: pairGroups('subcpmk-container'),
+                'bahan-kajian': singleGroups('bahan-kajian-container'),
+                penilaian: penilaian
+            }));
+        }
+
+        function restorePairGroups(containerId, pairs, type) {
+            const container = document.getElementById(containerId);
+            while (container.children.length > 1) container.removeChild(container.lastChild);
+            const firstChildren = container.children[0].children;
+            firstChildren[0].value = pairs.length ? pairs[0][0] : '';
+            firstChildren[1].value = pairs.length ? pairs[0][1] : '';
+            for (let i = 1; i < pairs.length; i++) {
+                addFormField(containerId, type);
+                const children = container.children[Math.min(i, container.children.length - 1)].children;
+                children[0].value = pairs[i][0];
+                children[1].value = pairs[i][1];
+            }
+        }
+
+        function restoreSingleGroups(containerId, values) {
+            const container = document.getElementById(containerId);
+            while (container.children.length > 1) container.removeChild(container.lastChild);
+            container.children[0].children[0].value = values.length ? values[0] : '';
+            for (let i = 1; i < values.length; i++) {
+                addBahanKajian();
+                container.children[i].children[0].value = values[i];
+            }
+        }
+
+        function restoreForm() {
+            const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+            if (!data) return;
+            document.getElementById('mata-kuliah').value = data['mata-kuliah'] || '';
+            document.getElementById('sks').value = data['sks'] || '';
+            document.getElementById('semester').value = data['semester'] || '';
+            restorePairGroups('cpl-container', data.cpl || [['', '']], 'CPL');
+            restorePairGroups('cpmk-container', data.cpmk || [['', '']], 'CPMK');
+            restorePairGroups('subcpmk-container', data.subcpmk || [['', '']], 'Sub-CPMK');
+            restoreSingleGroups('bahan-kajian-container', data['bahan-kajian'] || ['']);
+            if (data.penilaian) {
+                document.querySelectorAll('input[name="penilaian"]').forEach(checkbox => {
+                    const saved = data.penilaian[checkbox.value];
+                    if (saved) {
+                        checkbox.checked = saved.checked;
+                        const percentageInput = checkbox.closest('.checkbox-item').querySelector('.percentage-input');
+                        if (saved.checked) percentageInput.classList.remove('hidden');
+                        percentageInput.value = saved.percentage;
+                    }
+                });
+            }
+        }
+
+        function resetForm() {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+
+        document.addEventListener('input', saveForm);
+        document.addEventListener('change', saveForm);
+        restoreForm();
     </script>
 </body>
 </html>
